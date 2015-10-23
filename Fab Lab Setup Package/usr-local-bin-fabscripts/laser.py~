@@ -1,7 +1,0 @@
-import os,sys,time
-printfile = sys.argv[1]
-os.system('lpr -Prawlaser '+printfile)
-os.system('lpr -Prawlaser2 '+printfile)
-time.sleep(8)
-os.system('lprm -Prawlaser')
-os.system('lprm -Prawlaser2')
