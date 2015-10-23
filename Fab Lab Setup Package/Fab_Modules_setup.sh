@@ -9,7 +9,7 @@
 # Last edited on:  02/14/2015
 # Summary: Installs all the packages and programs that are used in the Lab
 #					for digital fabrication
-# Verified Version: Ubuntu 12.xx, 14.xx 
+# Verified Version: Ubuntu 12.xx, 14.04 LTS 
 ###################################################################################
 
 echo "Info:  Start Fab Setup Installation" >> /var/log/Fab_setup.log
