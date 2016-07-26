@@ -6,7 +6,7 @@
 # Original Author: David Solomon
 #
 # Last edited by:  David Solomon
-# Last edited on:  05/29/2015
+# Last edited on:  07/25/2016
 # Summary: Installs all the packages and programs that are used in the Lab
 #					for digital fabrication
 # Verified Version: Ubuntu 12.xx, 14.04 LTS 
@@ -14,9 +14,6 @@
 
 echo "Info:  Start Fab Setup Installation" >> /var/log/Fab_setup.log
 notify-send "Installing Update"
-
-SCRIPTDIR=$(dirname $0)
-echo "Info:  Script Directory: $SCRIPTDIR" >> /var/log/Fab_setup.log
 
 #######################################################################################################
 # Update and Upgrade of Packages
@@ -27,8 +24,14 @@ echo "Debug:  Get Update" >> /var/log/Fab_setup.log
 echo "Debug:  Installing Upgrade" >> /var/log/Fab_setup.log
 	sudo apt-get -y upgrade
 	sudo apt-get -y dist-upgrade
+	sudo apt-get -y install python-gi
 echo "Debug:  Clean Up Packages" >> /var/log/Fab_setup.log
 	sudo apt-get -y autoremove
+
+# Call python Fab\ Installer.py
+
+
+
 
 notify-send "Begin Plug-ins and Software Installation"
 echo "Debug: Begin Plug-ins and Software Installation" >> /var/log/Fab_setup.log
