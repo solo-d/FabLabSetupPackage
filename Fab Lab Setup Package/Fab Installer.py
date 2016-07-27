@@ -1,4 +1,4 @@
-import os, logging, gi
+import os, logging, time, gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
 
@@ -16,6 +16,48 @@ class appWindow(Gtk.Window):
 		main_dir = os.path.dirname(os.path.realpath(__file__))
 		logging.info("Main Directory: %s", main_dir)
 		print("Main Directory:" + main_dir)
+		os_info = os.system("cat /etc/issue")
+		logging.info("Operating System Information: %s", os_info)
+		#print("Operating System Information: %s" , os_info)
+		
+	def get_user_pw(self, message, title=''):
+	    # Returns user input as a string or None
+	    # If user does not input text it returns None, NOT AN EMPTY STRING.
+	    dialogWindow = Gtk.MessageDialog(self,
+		                  Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+		                  Gtk.MessageType.QUESTION,
+		                  Gtk.ButtonsType.OK_CANCEL,
+		                  message)
+
+	    dialogWindow.set_title(title)
+
+	    dialogBox = dialogWindow.get_content_area()
+	    userEntry = Gtk.Entry()
+	    userEntry.set_visibility(False)
+	    userEntry.set_invisible_char("*")
+	    userEntry.set_size_request(250,0)
+	    dialogBox.pack_end(userEntry, False, False, 0)
+
+	    dialogWindow.show_all()
+	    response = dialogWindow.run()
+	    text = userEntry.get_text() 
+	    dialogWindow.destroy()
+	    if (response == Gtk.ResponseType.OK) and (text != ''):
+		return text
+	    else:
+		return None
+	
+	def initate_installation(self, script):
+	        userPassword = self.get_user_pw("Please enter your password", "Password")
+		time.sleep(5)
+		command = "sudo apt-get update"
+		os.system('echo %s|sudo -S %s' % (userPassword, command))
+		#os.system("Sudo apt-get -y upgrade")
+
+		# Install application dependencies 
+		#os.system("Sudo apt-get -y install %s", plugin)
+
+		#os.system("Sudo apt-get -y install %s", script)
 
 # Set On Click Actions
 	def on_button_clicked(self, button,name):
@@ -26,8 +68,16 @@ class appWindow(Gtk.Window):
 			self.dict[name] = True
 		logging.debug("Installation Status for %s: %s", name ,self.dict[name])
 	
+	
+
 	def on_install_button_clicked(self, widget):		
+		installScript=""
 		logging.debug("Begin Installation. The Following programs will be installed:")
+		for key, value in self.dict.items():
+			if value:
+				installScript += " "+ key
+				print(installScript)
+		self.initate_installation(installScript)			
 
 	
 	def __init__(self):
@@ -40,6 +90,11 @@ class appWindow(Gtk.Window):
 
 #Global Variables
 		self.dict={'inkscape':False,'blender':False,'gimp':False,'cura':False,'makerbot':False,'fritzing':False,'fabModules':False,'eagle':False}
+		# inkscape dependencies 
+		# pstoedit
+
+		# Libre-Office Plug-in dependencies 
+		# cam.py laser.py tmp
 		
 		header_label = Gtk.Label("Check the applications that should be installed:")
 # Labels
@@ -72,6 +127,7 @@ class appWindow(Gtk.Window):
 
 		button1=Gtk.Button(label="Select All")
 		install_button=Gtk.Button(label="Install")
+		install_button.connect("clicked",self.on_install_button_clicked)
 
 		self.add(grid)
 # Set Location
