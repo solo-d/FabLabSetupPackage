@@ -95,6 +95,8 @@ echo "Debug:  Installing Cura For Ultimaker " >> /var/log/Fab_setup.log
 sudo apt-get -f install 
 sudo dpkg -i cura_15.02.1-debian_i386.deb
 
+# Find a way to dynamically get the latest version of http://software.ultimaker.com/current/Cura-2.1.2-Linux.deb
+
 echo "Debug:  Installation of Fab Modules" >> /var/log/Fab_setup.log
 
 # Installs Fab Modules application

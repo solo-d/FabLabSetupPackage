@@ -94,7 +94,10 @@ class appWindow(Gtk.Window):
 		# pstoedit
 
 		# Libre-Office Plug-in dependencies 
-		# cam.py laser.py tmp
+		# python-tk cam.py laser.py tmp
+
+		# Fab Modules Dependenceis
+		# 
 		
 		header_label = Gtk.Label("Check the applications that should be installed:")
 # Labels

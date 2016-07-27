@@ -125,3 +125,7 @@ Ubuntu Software installation
 Important locations
 
 usr/local/bin/* this is where fabscripts and fab modules files are kept.
+
+Detailed Change Log:
+- 
+
