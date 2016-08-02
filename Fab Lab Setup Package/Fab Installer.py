@@ -1,4 +1,4 @@
-import os, logging, time, gi
+import os, logging, time, gi, platform
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
 
@@ -14,10 +14,10 @@ class appWindow(Gtk.Window):
 
 	def get_current_dir(self):
 		main_dir = os.path.dirname(os.path.realpath(__file__))
+		os_info = platform.dist()
 		logging.info("Main Directory: %s", main_dir)
-		print("Main Directory:" + main_dir)
-		os_info = os.system("cat /etc/issue")
 		logging.info("Operating System Information: %s", os_info)
+		#print("Main Directory:" + main_dir)
 		#print("Operating System Information: %s" , os_info)
 		
 	def get_user_pw(self, message, title=''):
@@ -43,32 +43,29 @@ class appWindow(Gtk.Window):
 	    text = userEntry.get_text() 
 	    dialogWindow.destroy()
 	    if (response == Gtk.ResponseType.OK) and (text != ''):
-		return text
+			return text
 	    else:
-		return None
-	
+			return None
+
 	def initate_installation(self, script):
-	        userPassword = self.get_user_pw("Please enter your password", "Password")
-		time.sleep(5)
-		command = "sudo apt-get update"
-		os.system('echo %s|sudo -S %s' % (userPassword, command))
+		#userPassword = self.get_user_pw("Please enter your password", "Password")		
+        command = "sudo apt-get update"
+        os.system('echo %s|sudo -S %s' % (self.get_user_pw("Please enter your password", "Password"), command))
 		#os.system("Sudo apt-get -y upgrade")
 
 		# Install application dependencies 
-		#os.system("Sudo apt-get -y install %s", plugin)
+		#os.system("Sudo apt-get -y install %s", pre requisites)
 
 		#os.system("Sudo apt-get -y install %s", script)
 
-# Set On Click Actions
-	def on_button_clicked(self, button,name):
+# OnClick Actions
+	def on_button_clicked(self, button, name):
 		status = self.dict[name]	
 		if(status):	
 			 self.dict[name] = False
 		else:
 			self.dict[name] = True
-		logging.debug("Installation Status for %s: %s", name ,self.dict[name])
-	
-	
+		logging.debug("Installation Status for %s: %s", name, self.dict[name])
 
 	def on_install_button_clicked(self, widget):		
 		installScript=""
@@ -79,14 +76,12 @@ class appWindow(Gtk.Window):
 				print(installScript)
 		self.initate_installation(installScript)			
 
-	
 	def __init__(self):
 		logging.info("Starting Fab Lab Installer.")
 		Gtk.Window.__init__(self,title= 'Fab Lab Installer')
 		
 		grid = Gtk.Grid()
 		grid.set_row_spacing(2)
-		
 
 #Global Variables
 		self.dict={'inkscape':False,'blender':False,'gimp':False,'cura':False,'makerbot':False,'fritzing':False,'fabModules':False,'eagle':False}
@@ -119,47 +114,43 @@ class appWindow(Gtk.Window):
 		FabModules_checkbutton = Gtk.CheckButton()
 		Eagle_checkbutton = Gtk.CheckButton()
 
-	        Inkscape_checkbutton.connect("clicked", self.on_button_clicked,'inkscape')
-	        Blender_checkbutton.connect("clicked", self.on_button_clicked,'blender')
-	        Gimp_checkbutton.connect("clicked", self.on_button_clicked,'gimp')
-	        Cura_checkbutton.connect("clicked", self.on_button_clicked,'cura')
-	        Makerbot_checkbutton.connect("clicked", self.on_button_clicked,'makerbot')
-	        Fritzing_checkbutton.connect("clicked", self.on_button_clicked,'fritzing')
-	        FabModules_checkbutton.connect("clicked", self.on_button_clicked,'fabModules')
-	        Eagle_checkbutton.connect("clicked", self.on_button_clicked,'eagle')
+        Inkscape_checkbutton.connect("clicked", self.on_button_clicked,'inkscape')
+        Blender_checkbutton.connect("clicked", self.on_button_clicked,'blender')
+        Gimp_checkbutton.connect("clicked", self.on_button_clicked,'gimp')
+        Cura_checkbutton.connect("clicked", self.on_button_clicked,'cura')
+        Makerbot_checkbutton.connect("clicked", self.on_button_clicked,'makerbot')
+        Fritzing_checkbutton.connect("clicked", self.on_button_clicked,'fritzing')
+        FabModules_checkbutton.connect("clicked", self.on_button_clicked,'fabModules')
+        Eagle_checkbutton.connect("clicked", self.on_button_clicked,'eagle')
 
-		button1=Gtk.Button(label="Select All")
-		install_button=Gtk.Button(label="Install")
-		install_button.connect("clicked",self.on_install_button_clicked)
+        button1=Gtk.Button(label="Select All")
+        install_button=Gtk.Button(label="Install")
+        install_button.connect("clicked",self.on_install_button_clicked)
 
-		self.add(grid)
+        self.add(grid)
 # Set Location
-		grid.add(header_label)
-	        grid.attach(Inkscape_label, 0, 1, 1, 2)	        
-		grid.attach_next_to(Blender_label, Inkscape_label, Gtk.PositionType.BOTTOM, 1, 2)
-	        grid.attach_next_to(Gimp_label, Blender_label, Gtk.PositionType.BOTTOM, 1, 2)
-	        grid.attach_next_to(Cura_label, Gimp_label, Gtk.PositionType.BOTTOM, 1, 2)
-	        grid.attach_next_to(Makerbot_label, Cura_label, Gtk.PositionType.BOTTOM, 1, 2)
-	        grid.attach_next_to(Fritzing_label, Makerbot_label, Gtk.PositionType.BOTTOM, 1, 2)
-	        grid.attach_next_to(FabModules_label, Fritzing_label, Gtk.PositionType.BOTTOM, 1, 2)
-	        grid.attach_next_to(Eagle_label, FabModules_label, Gtk.PositionType.BOTTOM, 1, 2)
-	        grid.attach_next_to(button1, Eagle_label, Gtk.PositionType.BOTTOM, 1, 2)
-	        grid.attach_next_to(install_button, button1, Gtk.PositionType.RIGHT, 1, 2)
-		
-		grid.attach_next_to(Inkscape_checkbutton, Inkscape_label, Gtk.PositionType.RIGHT, 1, 1)
-		grid.attach_next_to(Blender_checkbutton, Blender_label, Gtk.PositionType.RIGHT, 1, 2)
-		grid.attach_next_to(Gimp_checkbutton, Gimp_label, Gtk.PositionType.RIGHT, 1, 2)
-		grid.attach_next_to(Cura_checkbutton, Cura_label, Gtk.PositionType.RIGHT, 1, 2)
-		grid.attach_next_to(Makerbot_checkbutton, Makerbot_label, Gtk.PositionType.RIGHT, 1, 2)
-		grid.attach_next_to(Fritzing_checkbutton, Fritzing_label, Gtk.PositionType.RIGHT, 1, 2)
-		grid.attach_next_to(FabModules_checkbutton, FabModules_label, Gtk.PositionType.RIGHT, 1, 2)
-		grid.attach_next_to(Eagle_checkbutton, Eagle_label, Gtk.PositionType.RIGHT, 1, 2)
+        grid.add(header_label)
+        grid.attach(Inkscape_label, 0, 1, 1, 2)	        
+        grid.attach_next_to(Blender_label, Inkscape_label, Gtk.PositionType.BOTTOM, 1, 2)
+        grid.attach_next_to(Gimp_label, Blender_label, Gtk.PositionType.BOTTOM, 1, 2)
+        grid.attach_next_to(Cura_label, Gimp_label, Gtk.PositionType.BOTTOM, 1, 2)
+        grid.attach_next_to(Makerbot_label, Cura_label, Gtk.PositionType.BOTTOM, 1, 2)
+        grid.attach_next_to(Fritzing_label, Makerbot_label, Gtk.PositionType.BOTTOM, 1, 2)
+        grid.attach_next_to(FabModules_label, Fritzing_label, Gtk.PositionType.BOTTOM, 1, 2)
+        grid.attach_next_to(Eagle_label, FabModules_label, Gtk.PositionType.BOTTOM, 1, 2)
+        grid.attach_next_to(button1, Eagle_label, Gtk.PositionType.BOTTOM, 1, 2)
+        grid.attach_next_to(install_button, button1, Gtk.PositionType.RIGHT, 1, 2)
 
+        grid.attach_next_to(Inkscape_checkbutton, Inkscape_label, Gtk.PositionType.RIGHT, 1, 1)
+        grid.attach_next_to(Blender_checkbutton, Blender_label, Gtk.PositionType.RIGHT, 1, 2)
+        grid.attach_next_to(Gimp_checkbutton, Gimp_label, Gtk.PositionType.RIGHT, 1, 2)
+        grid.attach_next_to(Cura_checkbutton, Cura_label, Gtk.PositionType.RIGHT, 1, 2)
+        grid.attach_next_to(Makerbot_checkbutton, Makerbot_label, Gtk.PositionType.RIGHT, 1, 2)
+        grid.attach_next_to(Fritzing_checkbutton, Fritzing_label, Gtk.PositionType.RIGHT, 1, 2)
+        grid.attach_next_to(FabModules_checkbutton, FabModules_label, Gtk.PositionType.RIGHT, 1, 2)
+        grid.attach_next_to(Eagle_checkbutton, Eagle_label, Gtk.PositionType.RIGHT, 1, 2)
 
-
-		self.get_current_dir()
-
-
+        self.get_current_dir()
 
 win = appWindow()
 win.connect("delete-event",Gtk.main_quit)
