@@ -16,13 +16,9 @@ class appWindow(Gtk.Window):
 		main_dir = os.path.dirname(os.path.realpath(__file__))
 		os_info = platform.dist()
 		logging.info("Main Directory: %s", main_dir)
-		logging.info("Operating System Information: %s", os_info)
-		#print("Main Directory:" + main_dir)
-		#print("Operating System Information: %s" , os_info)
+		logging.info("Operating System Information: %s", os_info)		
 		
 	def get_user_pw(self, message, title=''):
-		# Returns user input as a string or None
-		# If user does not input text it returns None, NOT AN EMPTY STRING.
 		dialogWindow = Gtk.MessageDialog(self,
 						  Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
 						  Gtk.MessageType.QUESTION,
@@ -47,14 +43,14 @@ class appWindow(Gtk.Window):
 		else:
 			return None
 
-	def initate_installation(self, script):
-		#userPassword = self.get_user_pw("Please enter your password", "Password")		
+	def initate_installation(self, pre_req, script):
+		userPassword = self.get_user_pw("Please enter your password", "Password")		
 		command = "sudo apt-get update"
-		os.system('echo %s|sudo -S %s' % (self.get_user_pw("Please enter your password", "Password"), command))
+		os.system('echo %s|sudo -S %s' % (userPassword, command))
 		#os.system("Sudo apt-get -y upgrade")
 
 		# Install application dependencies 
-		#os.system("Sudo apt-get -y install %s", pre requisites)
+		#os.system("Sudo apt-get -y install %s", pre_req)
 
 		#os.system("Sudo apt-get -y install %s", script)
 
@@ -71,19 +67,27 @@ class appWindow(Gtk.Window):
 
 	def on_install_button_clicked(self, widget):		
 		installScript=""
-		logging.debug("Begin Installation. The Following programs will be installed:")
+		preRequisteScript=""
+		logging.debug("Begin Installation. The Following programs will be installed and their dependences:")
 		for key, value in self.dict.items():
 			if value:
 				installScript += " "+ key
 				print(installScript)
 
 		# Create two threads as follows
-		try:
-			thread.start_new_thread(self.initate_installation, (installScript,))
-		except Exception as e:
-			print ("Error: %s",e)
+		#try:
+		#	thread.start_new_thread(self.initate_installation, (installScript,))
+		#except Exception as e:
+		#	print ("Error: %s",e)
 
-		#self.initate_installation(installScript)			
+		self.initate_installation("",installScript)			
+
+	def select_all_button_clicked(self, widget):
+		logging.debug("Select All button clicked:")
+		for key, value in self.dict.items():
+			if not(value):
+				self.dict[key]=True
+		print(self.dict)
 
 	def __init__(self):
 		logging.info("Starting Fab Lab Installer.")
@@ -93,7 +97,7 @@ class appWindow(Gtk.Window):
 		grid.set_row_spacing(2)
 
 #Global Variables
-		self.dict={'inkscape':False,'blender':False,'gimp':False,'cura':False,'makerbot':False,'fritzing':False,'fabModules':False,'eagle':False}
+		self.dict={'inkscape':True,'blender':True,'gimp':True,'cura':False,'makerbot':False,'fritzing':False,'fabModules':True,'eagle':False}
 		# inkscape dependencies 
 		# pstoedit
 
@@ -105,7 +109,7 @@ class appWindow(Gtk.Window):
 		
 		header_label = Gtk.Label("Check the applications that should be installed:")
 # Labels
-		Inkscape_label = Gtk.Label("Inkscape 0.91")
+		Inkscape_label = Gtk.Label("Inkscape")
 		Blender_label = Gtk.Label("Blender")
 		Gimp_label = Gtk.Label("Gimp")
 		Cura_label = Gtk.Label("Cura")
@@ -116,12 +120,16 @@ class appWindow(Gtk.Window):
 
 # Buttons		
 		Inkscape_checkbutton = Gtk.CheckButton()
+		Inkscape_checkbutton.set_active(self.dict['inkscape'])
 		Blender_checkbutton = Gtk.CheckButton()
+		Blender_checkbutton.set_active(self.dict['blender'])
 		Gimp_checkbutton = Gtk.CheckButton()
+		Gimp_checkbutton.set_active(self.dict['gimp'])
 		Cura_checkbutton = Gtk.CheckButton()
 		Makerbot_checkbutton = Gtk.CheckButton()	
 		Fritzing_checkbutton = Gtk.CheckButton()
 		FabModules_checkbutton = Gtk.CheckButton()
+		FabModules_checkbutton.set_active(self.dict['fabModules'])
 		Eagle_checkbutton = Gtk.CheckButton()
 
 		Inkscape_checkbutton.connect("clicked", self.on_button_clicked,'inkscape')
@@ -135,6 +143,8 @@ class appWindow(Gtk.Window):
 
 		button1=Gtk.Button(label="Select All")
 		install_button=Gtk.Button(label="Install")
+
+		button1.connect("clicked",self.select_all_button_clicked)
 		install_button.connect("clicked",self.on_install_button_clicked)
 
 		self.add(grid)
