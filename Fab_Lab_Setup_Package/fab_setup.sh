@@ -16,7 +16,7 @@ echo "Info:  Start Fab Setup Installation" >> /var/log/Fab_setup.log
 notify-send "Installing Update"
 
 SCRIPTDIR=$(dirname $0)
-echo "Info:  Script Directory: $SCRIPTDIR" >> /var/log/Fab_setup.log
+echo "Info:  Script Directory: '$SCRIPTDIR'" >> /var/log/Fab_setup.log
 
 #######################################################################################################
 # Update and Upgrade of Packages
@@ -63,22 +63,6 @@ libpoppler-dev libpoppler-glib-dev
 #			-> Cura:				Developed by Ultimaker to make 3D printing as easy and streamlined as possible.
 #######################################################################################################
 
-notify-send "Creating Fritzing Directory"
-echo "Debug:  Create Fritzing folder" >> /var/log/Fab_setup.log
-sudo mkdir /opt/Fritzing\ 0.9.1b 
-
-notify-send "Downloading Fritzing Installation package"
-echo "Debug:  Downloading Fritzing Installation package" >> /var/log/Fab_setup.log
-wget http://fritzing.org/download/0.9.1b/linux-32bit/fritzing-0.9.1b.linux.i386.tar.bz2
-
-notify-send "Extracting Fritzing Installation package"
-echo "Debug:  Extracting Fritzing Installation package to /opt/Fritzing\ 0.9.1b " >> /var/log/Fab_setup.log
-sudo tar xvjf fritzing-0.9.1b.linux.i386.tar.bz2 -C /opt/Fritzing\ 0.9.1b 
-sudo rmdir -rf fritzing-0.9.1b.linux.i386.tar.bz2
-
-#wget http://web.cadsoft.de/ftp/eagle/program/7.2/eagle-lin-7.2.0.run
-#sudo sh eagle-lin-7.2.0.run
-
 echo "Debug:  Installing inkscape, blender, gimp, main-menu, unzip, vim, and font-manager " >> /var/log/Fab_setup.log
 
 # Installation of inkscape, blender, gimp, main-menu, unzip, vim, font-manager, and eagle 
@@ -86,16 +70,12 @@ sudo apt-get -y install alacarte blender gimp gimp-data gimp-plugin-registry gim
 
 cd $SCRIPTDIR/Resources/
 sleep 2
-
-notify-send "Installing Cura For Ultimaker"
-echo "Debug:  Installing Cura For Ultimaker " >> /var/log/Fab_setup.log
-sudo apt-get -f install 
-sudo dpkg -i cura_15.02.1-debian_i386.deb
+echo "Debug:" "$(dirname $0)" >> /var/log/Fab_setup.log
 
 echo "Debug:  Installation of Fab Modules" >> /var/log/Fab_setup.log
 
 # Installs Fab Modules application
-cd $SCRIPTDIR
+cd ..
 sleep 2
 sudo chmod +x Fab_Modules_setup.sh
 sudo ./Fab_Modules_setup.sh
@@ -113,7 +93,7 @@ sudo mkdir /home/$USER/Desktop/Users
 notify-send "Moving cam.py, cam_user.py, laser.py, and tmp to /usr/local/bin/fabscripts/"
 echo "Debug:  Moving cam.py, cam_user.py, laser.py, and tmp to /usr/local/bin/fabscripts/" >> /var/log/Fab_setup.log
 
-cd $SCRIPTDIR/Resources/
+cd Resources/
 # Moves the files  need to print from the fab menu button to /usr/local/bin/fabscripts/
 sudo mv fabscripts /usr/local/bin/
 
@@ -128,11 +108,12 @@ sudo /usr/sbin/lpadmin -p vinyl -E -v usb://Roland/GX-24?serial=CX84502 -o print
 #cp /home/fab/Desktop/Fab\ Lab\ Set\ Up\ Package/Fab\ Lab\ Resources/Read\ Me /home/fab/Desktop/
 
 echo "Debug:  Make certain programs search able and executable and setup Users folder" >> /var/log/Fab_setup.log
-sudo python Configure_fab.py -s y -i 192.168.50.99
+
+sudo python ../Configure_fab.py -s y -i 192.168.50.99
 
 sleep 5
 
-echo "Debug:  Mounting drive and do final config" >> /var/log/Fab_setup.logsss
+echo "Debug:  Mounting drive and do final config" >> /var/log/Fab_setup.log
 sudo mount -a
 
 #######################################################################################################
@@ -142,12 +123,12 @@ sudo mount -a
 #######################################################################################################
 
 #copy background from folder to wallpaper folder
-cp $SCRIPTDIR/Resources/fablab_wallpaper.png /usr/share/backgrounds/
+cp fablab_wallpaper.png /usr/share/backgrounds/
 
 gsettings set org.gnome.desktop.background picture-uri file:///usr/share/backgrounds/fablab_wallpaper.png
 
 #add fonts
-sudo mv /Resources/Fonts/* /usr/share/fonts/truetype/freefont/
+sudo mv Fonts/* /usr/share/fonts/truetype/freefont/
 
 notify-send "Change ownership, group and permission of the folder to current user"
 echo "Debug:  Change ownership, group and permission of the folder to current user" >> /var/log/Fab_setup.log
